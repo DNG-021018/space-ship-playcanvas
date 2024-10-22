@@ -1,10 +1,19 @@
 import * as pc from "playcanvas";
+import {SceneGameManager} from "./Core/SceneGameManager";
 
-export async function setupApp() {
+pc.WasmModule.setConfig("Ammo", {
+  glueUrl: "../Physics/ammo.wasm.js",
+  wasmUrl: "../Physics/ammo.wasm.wasm",
+  fallbackUrl: "../Physics/ammo.js",
+});
+
+async function main() {
   const canvas = document.createElement("canvas");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
   document.body.appendChild(canvas);
 
-  const app = new pc.Application(canvas, {
+  let app = new pc.Application(canvas, {
     mouse: new pc.Mouse(document.body),
     keyboard: new pc.Keyboard(window),
     elementInput: new pc.ElementInput(canvas),
@@ -15,18 +24,11 @@ export async function setupApp() {
 
   window.addEventListener("resize", () => app.resizeCanvas());
 
-  pc.WasmModule.setConfig("Ammo", {
-    glueUrl: "./Utils/ammo.wasm.js",
-    wasmUrl: "./Utils/ammo.wasm.wasm",
-    fallbackUrl: "./Utils/ammo.js",
-  });
-
   await new Promise((resolve) => {
     pc.WasmModule.getInstance("Ammo", resolve);
   });
 
-  app.systems.rigidbody?.gravity.set(0, -3, 0);
-  app.start();
-
-  return app;
+  new SceneGameManager(app);
 }
+
+main().catch(console.error);

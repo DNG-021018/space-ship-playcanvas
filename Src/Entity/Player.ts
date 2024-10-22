@@ -1,13 +1,11 @@
 import * as pc from "playcanvas";
-import * as gameManager from "./GameManager";
-import {getRockDamage} from "./Rock";
-import {HealthSystem} from "./HealthSystem";
-import {getTrapDamage} from "./Trap";
-import {getHealth} from "./Wrech";
+import {HealthSystem} from "../Module/HealthSystem";
+import {AssetManager} from "../Core/AssetManager";
+import {AssetKey} from "../Enum/AssetKey";
 
 // assets
 const assets = {
-  charModelAsset: new pc.Asset("Rocketship", "model", {url: "./Assets/Rocketship.glb"}),
+  charModelAsset: AssetManager.getInstance().getAsset(AssetKey.ModelPlayerRocket),
 };
 
 //player stats
@@ -19,8 +17,8 @@ const charSpeed = 3;
 const charRot = 3;
 const charJumpPower = 8;
 var charRotZ = 0;
-const minRotZ = -40 * pc.math.DEG_TO_RAD;
-const maxRotZ = 40 * pc.math.DEG_TO_RAD;
+const minRotZ = -130 * pc.math.DEG_TO_RAD;
+const maxRotZ = 130 * pc.math.DEG_TO_RAD;
 
 // player movement condition
 var _isGround = false;
@@ -31,12 +29,10 @@ export function generatorPlayer(app) {
   }
 
   const player = RenderPlayer(app);
-  particlesSystem(player);
   checkGround(player);
   Movement(app, player);
   PickFuels(player);
   HitObstacle(player);
-  HitTrap(player);
   PickWrech(player);
 }
 
@@ -48,12 +44,9 @@ function RenderPlayer(app) {
   player.setPosition(0, -2, -10);
   player.setLocalScale(scale, scale, scale);
 
-  const assetListLoader = new pc.AssetListLoader(Object.values(assets), app.assets);
-  assetListLoader.load(() => {
-    player.addComponent("model", {
-      type: "asset",
-      asset: assets.charModelAsset,
-    });
+  player.addComponent("model", {
+    type: "asset",
+    asset: assets.charModelAsset,
   });
 
   player.addComponent("rigidbody", {type: "dynamic", mass: 1, restitution: 0, friction: 1});
@@ -69,59 +62,6 @@ function RenderPlayer(app) {
   }
 
   return player;
-}
-
-function particlesSystem(mainObject) {
-  if (mainObject == null) {
-    return;
-  }
-  // particles system
-  const particlesEntity = new pc.Entity();
-  const color = new pc.Color(235 / 255, 134 / 255, 0 / 255);
-
-  particlesEntity.addComponent("particlesystem", {
-    numParticles: 100,
-    lifetime: 0.5,
-    rate: 0.1,
-    rate2: 0.02,
-    emitterShape: pc.EMITTERSHAPE_BOX,
-    blendType: pc.BLEND_ADDITIVEALPHA,
-    emitterExtents: new pc.Vec3(0, 0, 0),
-    initialVelocity: 1,
-    loop: true,
-    autoPlay: false,
-    localSpace: true,
-    // LOCAL VELOCITY GRAPH
-    localVelocityGraph: new pc.CurveSet([
-      [0, 0],
-      [0, -5],
-      [0, 0],
-    ]),
-    localVelocityGraph2: new pc.CurveSet([
-      [1, 0],
-      [1, 5],
-      [1, 0],
-    ]),
-    // RADIANT SPEED
-    RadialSpeedGraph: new pc.CurveSet([0.333, 1.625]),
-    RadialSpeedGraph2: new pc.CurveSet([1, 5]),
-    // SCALE
-    scaleGraph: new pc.Curve([0.05, 0.6, 1, 0.4]),
-    colorGraph: new pc.CurveSet([
-      [0, color.r],
-      [0.5, color.g],
-      [1, color.b],
-    ]),
-    colorGraph2: new pc.CurveSet([
-      [0, color.r],
-      [0.5, color.g],
-      [1, color.b],
-    ]),
-  });
-  mainObject.addChild(particlesEntity);
-  particlesEntity.setPosition(0, -2.5, -10);
-
-  particlesEntity.particlesystem?.play();
 }
 
 function PickFuels(mainObject) {
@@ -145,7 +85,7 @@ function PickWrech(mainObject) {
   mainObject.collision.on("collisionstart", function (result) {
     if (result.other.name == "wrech") {
       result.other.destroy();
-      mainObject.health.heal(getHealth());
+      mainObject.health.heal();
     }
   });
 }
@@ -159,26 +99,9 @@ function HitObstacle(mainObject) {
 
   mainObject.collision.on("collisionstart", function (result) {
     if (result.other.name == "obstacle") {
-      mainObject.health.takeDamage(getRockDamage());
+      mainObject.health.takeDamage();
       if (mainObject.health.onDeath()) {
-        gameManager.ReloadLevel();
-      }
-    }
-  });
-}
-
-function HitTrap(mainObject) {
-  if (mainObject == null) {
-    return;
-  }
-
-  mainObject.health = playerHeath;
-
-  mainObject.collision.on("collisionstart", function (result) {
-    if (result.other.name == "trap") {
-      mainObject.health.takeDamage(getTrapDamage());
-      if (mainObject.health.onDeath()) {
-        gameManager.ReloadLevel();
+        window.location.reload();
       }
     }
   });
