@@ -52,9 +52,6 @@ export class SceneGameManager {
     this.playerManager = new PlayerManager(this.app);
     this.RootChild(this.playerManager);
 
-    this.player = new Player();
-    this.playerManager.addChild(this.player);
-
     this.rock = new Rock();
     this.RootChild(this.rock);
 
@@ -82,6 +79,6 @@ export class SceneGameManager {
   }
 
   private setupPhysics() {
-    this.app.systems.rigidbody?.gravity.set(0, -3, 0);
+    this.app.systems.rigidbody?.gravity.set(0, -9.8, 0);
   }
 }

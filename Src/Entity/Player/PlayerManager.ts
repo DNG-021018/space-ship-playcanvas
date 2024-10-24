@@ -15,17 +15,20 @@ export class PlayerManager extends pc.Entity {
   // player movement stats
   private charSpeed: number = 3;
   private charRot: number = 3;
-  private charThrustPower: number = 8;
+  private charThrustPower: number = 10;
   private charRotZ: number = 0;
-  private minRotZ: number = -130 * pc.math.DEG_TO_RAD;
-  private maxRotZ: number = 130 * pc.math.DEG_TO_RAD;
+  private minRotZ: number = -180 * pc.math.DEG_TO_RAD;
+  private maxRotZ: number = 180 * pc.math.DEG_TO_RAD;
+  private newMovement = new pc.Vec3(0, 0, 0);
 
   // player movement condition
   private _isGround = false;
 
   constructor(app) {
     super();
+
     this.player = new Player();
+    this.addChild(this.player);
 
     this.particle = new ParticlesSystem();
     this.player.addChild(this.particle);
@@ -44,8 +47,8 @@ export class PlayerManager extends pc.Entity {
   }
 
   private PickFuels() {
-    if (this.collision == null) return;
-    this.collision.on("collisionstart", function (result) {
+    if (this.player.collision == null) return;
+    this.player.collision.on("collisionstart", function (result) {
       if (result.other.name == "fuel") {
         result.other.destroy();
       }
@@ -53,8 +56,8 @@ export class PlayerManager extends pc.Entity {
   }
 
   private PickWrech() {
-    if (this.collision == null) return;
-    this.collision.on("collisionstart", function (result) {
+    if (this.player.collision == null) return;
+    this.player.collision.on("collisionstart", function (result) {
       if (result.other.name == "wrech") {
         result.other.destroy();
         this.healSystem.heal(1);
@@ -63,10 +66,10 @@ export class PlayerManager extends pc.Entity {
   }
 
   private HitObstacle() {
-    if (this.collision == null) return;
-    this.collision.on("collisionstart", function (result) {
+    if (this.player.collision == null) return;
+    this.player.collision.on("collisionstart", function (result) {
       if (result.other.name == "obstacle") {
-        this.health.takeDamage(1);
+        this.health?.takeDamage(1);
         if (this.health.onDeath()) {
           window.location.reload();
         }
@@ -75,52 +78,45 @@ export class PlayerManager extends pc.Entity {
   }
 
   private checkGround() {
-    if (this.collision == null) {
+    if (this.player.collision == null) {
       return;
     }
-    this.collision.on("collisionstart", function (result) {
+    this.player.collision.on("collisionstart", function (result) {
       if (result.other.name == "ground") {
         this._isGround = true;
       }
     });
 
-    this.collision.on("collisionend", function () {
+    this.player.collision.on("collisionend", function () {
       this._isGround = false;
     });
   }
 
   private Movement(dt: number) {
     if (this.app == null) return;
-    let newMovement = new pc.Vec3(0, 0, 0);
 
-    if (this.app.keyboard.isPressed(pc.KEY_A) && !this._isGround) {
-      newMovement.x += this.charSpeed;
-      if (this.charRotZ > this.minRotZ) {
-        this.charRotZ -= this.charRot * dt;
-        //debug
-        console.log(this.charRotZ);
-      }
-    }
+    if (this.app.keyboard.isPressed(pc.KEY_D)) {
+      this.newMovement.x -= this.charSpeed;
 
-    if (this.app.keyboard.isPressed(pc.KEY_D) && !this._isGround) {
-      newMovement.x -= this.charSpeed;
       if (this.charRotZ < this.maxRotZ) {
         this.charRotZ += this.charRot * dt;
-        //debug
-        console.log(this.charRotZ);
       }
     }
-
+    if (this.app.keyboard.isPressed(pc.KEY_A)) {
+      this.newMovement.x += this.charSpeed;
+      if (this.charRotZ > this.minRotZ) {
+        this.charRotZ -= this.charRot * dt;
+      }
+    }
     if (this.app.keyboard.isPressed(pc.KEY_SPACE)) {
-      newMovement.y += this.charThrustPower;
+      this.newMovement.y += this.charThrustPower * dt;
       this.particle.playParticles();
-      //debug
-      console.log(newMovement.y + " " + this.particle.getParticlePlaying());
+    } else {
+      this.particle.stopParticles();
     }
 
-    if (this.rigidbody == null) return;
-    this.rigidbody.applyForce(newMovement.x, newMovement.y, 0);
-    this.setEulerAngles(0, 180, this.charRotZ * pc.math.RAD_TO_DEG);
+    this.player.rigidbody?.applyForce(this.newMovement.x, this.newMovement.y, 0);
+    this.player.setEulerAngles(0, 180, this.charRotZ * pc.math.RAD_TO_DEG);
   }
 
   public update(dt: number) {
