@@ -4,14 +4,14 @@ import {AssetKey} from "../Enum/AssetKey";
 
 export class Ground extends pc.Entity {
   private MapTextureAssets = AssetManager.getInstance().getAsset(AssetKey.TextureGround);
-  private scaleX: number = 200;
+  private scaleX: number = 300;
   private scaleY: number = 1;
   private scaleZ: number = 300;
   private groundPosition: pc.Vec3 = new pc.Vec3(0, -4, 0);
 
   constructor() {
     super();
-    this.init;
+    this.init();
   }
 
   private init() {
@@ -29,10 +29,10 @@ export class Ground extends pc.Entity {
     this.addComponent("render", {type: "box"});
 
     const material = new pc.StandardMaterial();
-    const assetTexure = this.MapTextureAssets;
-    material.diffuseMap = assetTexure?.resource;
+    const assetTexture = this.MapTextureAssets?.resource as pc.Texture;
+    material.diffuseMap = assetTexture;
     material.update();
-    const meshInstance = this.model?.meshInstances[0];
+    const meshInstance = this.render?.meshInstances[0];
     if (meshInstance) {
       meshInstance.material = material;
     }

@@ -1,14 +1,6 @@
 import * as pc from "playcanvas";
 
 export class Light extends pc.Entity {
-  private color: pc.Vec3 = new pc.Vec3(1, 1, 1);
-  private intensity: number = 1;
-  private shadowDistance: number = 50;
-  private castShadows: boolean = true;
-  private shadowBias: number = 0.1;
-  private normalOffsetBias: number = 0.2;
-  private angle: pc.Vec3 = new pc.Vec3(-45, 30, 0);
-
   constructor() {
     super();
     this.init();
@@ -18,14 +10,13 @@ export class Light extends pc.Entity {
     this.name = "DirectionalLight";
     this.addComponent("light", {
       type: pc.LIGHTTYPE_DIRECTIONAL,
-      color: this.color,
-      intensity: this.intensity,
-      shadowDistance: this.shadowDistance,
-      castShadows: this.castShadows,
-      shadowBias: this.shadowBias,
-      normalOffsetBias: this.normalOffsetBias,
+      color: new pc.Color(1, 1, 1),
+      intensity: 1,
+      shadowDistance: 50,
+      castShadows: true,
+      shadowBias: 0.1,
+      normalOffsetBias: 0.2,
     });
-
-    this.setEulerAngles(this.angle);
+    this.setEulerAngles(-45, 30, 0);
   }
 }

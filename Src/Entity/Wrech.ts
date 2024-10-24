@@ -2,9 +2,9 @@ import * as pc from "playcanvas";
 import {AssetManager} from "../Core/AssetManager";
 import {AssetKey} from "../Enum/AssetKey";
 
-export class Fuel extends pc.Entity {
+export class Wrech extends pc.Entity {
   private charModelAsset = AssetManager.getInstance().getAsset(AssetKey.ModelItemsWrech);
-  private fuelPosition: pc.Vec3 = new pc.Vec3(0, 2, -10);
+  private wrechPosition: pc.Vec3 = new pc.Vec3(5, 2, -10);
   private scale: number = 5;
   private health: number = 1;
   private charRotY: number = 0;
@@ -20,7 +20,7 @@ export class Fuel extends pc.Entity {
   }
 
   private init() {
-    this.setPosition(this.fuelPosition);
+    this.setPosition(this.wrechPosition);
     this.setLocalScale(this.scale, this.scale, this.scale);
     this.loadModel();
     this.setRigidbody();
@@ -57,6 +57,6 @@ export class Fuel extends pc.Entity {
 
   public update(dt) {
     this.charRotY -= this.charRot * dt;
-    this.setEulerAngles(0, this.charRotY * pc.math.RAD_TO_DEG, 0);
+    this.setEulerAngles(90, this.charRotY * pc.math.RAD_TO_DEG, 0);
   }
 }

@@ -1,4 +1,5 @@
 import * as pc from "playcanvas";
+import {Player} from "./Player/Player";
 
 export class Camera extends pc.Entity {
   private colorBackground: pc.Color = new pc.Color(66 / 255, 135 / 255, 245 / 255);
@@ -17,5 +18,6 @@ export class Camera extends pc.Entity {
     });
     this.setPosition(this.offset);
     this.setEulerAngles(this.angles);
+    return this;
   }
 }
