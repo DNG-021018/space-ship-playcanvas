@@ -5,9 +5,9 @@ import {PlayerManager} from "./PlayerManager";
 
 export class Player extends pc.Entity {
   // Init
-
   private playerPos: pc.Vec3 = new pc.Vec3(0, -2, -10);
   private playerScale: number = 0.1;
+
   // assets
   private charModelAsset = AssetManager.getInstance().getAsset(AssetKey.ModelPlayerRocket);
 

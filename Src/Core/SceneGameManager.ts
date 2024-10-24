@@ -79,6 +79,6 @@ export class SceneGameManager {
   }
 
   private setupPhysics() {
-    this.app.systems.rigidbody?.gravity.set(0, -9.8, 0);
+    this.app.systems.rigidbody?.gravity.set(0, -100, 0);
   }
 }
