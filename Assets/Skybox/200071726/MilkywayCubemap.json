@@ -1,1 +1,16 @@
-{"name":"New Cubemap","textures":["../200071729/Milkyway_posx.png","../200071732/Milkyway_negx.png","../200071728/Milkyway_posy.png","../200071731/Milkyway_negy.png","../200071727/Milkyway_posz.png","../200071730/Milkyway_negz.png"],"minFilter":5,"magFilter":1,"anisotropy":1,"rgbm":true,"prefiltered":"MilkywayCubemap.dds"}
+{
+  "name": "New Cubemap",
+  "textures": [
+    "../200071729/Milkyway_posx.png",
+    "../200071732/Milkyway_negx.png",
+    "../200071728/Milkyway_posy.png",
+    "../200071731/Milkyway_negy.png",
+    "../200071727/Milkyway_posz.png",
+    "../200071730/Milkyway_negz.png"
+  ],
+  "minFilter": 5,
+  "magFilter": 1,
+  "anisotropy": 1,
+  "rgbm": true,
+  "prefiltered": "MilkywayCubemap.dds"
+}

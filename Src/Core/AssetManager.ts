@@ -29,7 +29,6 @@ export class AssetManager {
       [AssetKey.ModelPlayerRocket]: new pc.Asset("ModelPlayerRocket", "model", {url: "../../Assets/Rocketship.glb"}),
       [AssetKey.ModelLoadingScreenCloudy]: new pc.Asset("ModelLoadingScreenCloudy", "model", {url: "../../Assets/Cloud.glb"}),
       [AssetKey.TextureGround]: new pc.Asset("TextureGround", "texture", {url: "../../Assets/Textures/MoonTexture.png"}),
-      [AssetKey.TextureSkybox]: new pc.Asset("TextureSkybox", "texture", {url: "../../Assets/Skybox/200071726/MilkywayCubemap.dds"}),
     };
 
     const AssetLoader = new pc.AssetListLoader(Object.values(listAsset), app.assets);
@@ -41,12 +40,12 @@ export class AssetManager {
       }
 
       for (const [key, value] of Object.entries(listAsset)) {
-        if (!value.resource) {
-          console.error(`Failed to load asset: ${key} - URL: ${value.file.url}`);
-        } else {
-          console.log(`Successfully loaded asset: ${key} - URL: ${value.file.url}`);
-          this.holderAsset.set(key, value);
-        }
+        // if (!value.resource) {
+        // console.error(`Failed to load asset: ${key} - URL: ${value.file.url}`);
+        // } else {
+        // console.log(`Successfully loaded asset: ${key} - URL: ${value.file.url}`);
+        this.holderAsset.set(key, value);
+        // }
       }
 
       this.eventHandler.fire("assetsLoaded");
