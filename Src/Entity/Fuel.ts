@@ -18,7 +18,7 @@ export class Fuel extends pc.Entity {
     this.setPosition(this.fuelPosition);
     this.setLocalScale(this.scale, this.scale, this.scale);
     this.loadModel();
-    this.setRigidbody();
+    // this.setRigidbody();
     this.setCollision();
 
     return this;
@@ -34,22 +34,29 @@ export class Fuel extends pc.Entity {
   }
 
   private setRigidbody() {
-    this.addComponent("rigidbody", {type: "kinematic"});
+    this.addComponent("rigidbody", {type: pc.BODYTYPE_STATIC});
     if (this.rigidbody == null) return;
-    this.rigidbody.mass = 0;
     this.rigidbody.restitution = 0;
     this.rigidbody.friction = 0;
-    this.rigidbody.linearFactor = new pc.Vec3(1, 1, 0);
-    this.rigidbody.angularFactor = new pc.Vec3(1, 1, 0);
   }
 
   private setCollision() {
     this.addComponent("collision", {type: "box"});
     if (this.collision == null) return;
-    this.collision.halfExtents = new pc.Vec3(this.scale / 3, this.scale / 3, this.scale / 2);
+    this.collision.halfExtents = new pc.Vec3(0.4, 0.4, 0.4);
+  }
+
+  private CollisionUpdate() {
+    if (this.collision == null) return;
+    this.collision.on(pc.CollisionComponent.EVENT_TRIGGERENTER, (result) => {
+      if (result.name === "Player") {
+        this.destroy();
+      }
+    });
   }
 
   public update(dt) {
+    this.CollisionUpdate();
     this.charRotY -= this.charRot * dt;
     this.setEulerAngles(0, this.charRotY * pc.math.RAD_TO_DEG, 0);
   }

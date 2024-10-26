@@ -11,7 +11,7 @@ export class HealthSystem {
     this.currentHealth -= amount;
     if (this.currentHealth <= 0) {
       this.currentHealth = 0;
-      this?.onDeath();
+      this.onDeath();
     }
   }
 

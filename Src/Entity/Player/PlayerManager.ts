@@ -1,118 +1,129 @@
 import * as pc from "playcanvas";
 import {HealthSystem} from "../../Module/HealthSystem";
-import {Player} from "./Player";
 import {ParticlesSystem} from "../../Effect/Particles";
+import {Player} from "./Player";
+import {Rock} from "../Rock";
+import {Fuel} from "../Fuel";
+import {Wrech} from "../Wrech";
 
 export class PlayerManager extends pc.Entity {
   private app: pc.Application;
   private player: Player;
   private particle: ParticlesSystem;
+  private obstacle: Rock;
+  private fuel: Fuel;
+  private wrench: Wrech;
+  private healSystem: HealthSystem;
 
-  //player stats
+  //player life
   private charLife: number = 3;
-  private healSystem;
 
   // player movement stats
-  private charSpeed: number = 5;
+  private charSpeed: number = 10;
   private charRot: number = 3;
-  private charThrustPower: number = 10;
+  private charThrustPower: number = 30;
   private charRotZ: number = 0;
   private minRotZ: number = -50 * pc.math.DEG_TO_RAD;
   private maxRotZ: number = 50 * pc.math.DEG_TO_RAD;
   private newMovement = new pc.Vec3(0, 0, 0);
 
   // player movement condition
-  private _isGround = false;
+  private _isGround = true;
 
-  constructor(app) {
+  constructor(app, player) {
     super();
-
-    this.player = new Player();
-    this.addChild(this.player);
-
-    this.particle = new ParticlesSystem();
-    this.player.addChild(this.particle);
-
     this.app = app;
+    this.player = player;
     this.init();
   }
 
   private init() {
-    this.playerLife();
-  }
-
-  private playerLife() {
+    this.obstacle = new Rock();
+    this.fuel = new Fuel();
+    this.wrench = new Wrech();
     this.healSystem = new HealthSystem(this.charLife);
-    return this.healSystem;
+
+    this.particle = new ParticlesSystem();
+    this.player.addChild(this.particle);
+
+    this.CollisionUpdate();
   }
 
-  private PickFuels() {
-    if (this.player.collision == null) return;
-    this.player.collision.on("collisionstart", function (result) {
-      if (result.other?.name == "fuel") {
-        result.other.destroy();
+  private CollisionDetection(result) {
+    if (result == null) {
+      console.log("Result not found");
+      return;
+    }
+
+    if (result.other.name == "obstacle") {
+      console.log(result.other.name);
+      this.healSystem.takeDamage(this.obstacle.getRockDamage());
+
+      if (this.healSystem.onDeath()) {
+        console.log("Player dead");
+        // window.location.reload();
       }
-    });
+      return;
+    }
   }
 
-  private PickWrech() {
+  private CollisionUpdate() {
     if (this.player.collision == null) return;
-    this.player.collision.on("collisionstart", function (result) {
-      if (result.other?.name == "wrech") {
-        result.other.destroy();
-        this.healSystem.heal(1);
-      }
-    });
+    this.player.collision.on(pc.CollisionComponent.EVENT_COLLISIONSTART, this.CollisionDetection.bind(this));
   }
 
-  private HitObstacle() {
-    if (this.player.collision == null) return;
-    this.player.collision.on("collisionstart", function (result) {
-      if (result.other?.name == "obstacle") {
-        this.health?.takeDamage(1);
-        if (this.health.onDeath()) {
-          window.location.reload();
-        }
-      }
-    });
-  }
+  // private Movement(dt: number) {
+  //   if (this.app == null) return;
 
-  private checkGround() {
-    if (this.player.collision == null) return;
+  //   // // left right
+  //   if (this.app.keyboard.isPressed(pc.KEY_D)) {
+  //     this.newMovement.x -= this.charSpeed * dt;
 
-    this.player.collision.on(
-      "collisionstart",
-      function (result) {
-        if (result.other?.name === "ground") {
-          this._isGround = true;
-        }
-      }.bind(this)
-    );
+  //     // rot right with limit angle
+  //     this.charRotZ = Math.min(this.charRotZ + this.charRot * dt, this.maxRotZ);
+  //   } else if (this.app.keyboard.isPressed(pc.KEY_A)) {
+  //     this.newMovement.x += this.charSpeed * dt;
 
-    this.player.collision.on(
-      "collisionend",
-      function (result) {
-        if (result.other?.name === "ground") {
-          this._isGround = false;
-        }
-      }.bind(this)
-    );
-  }
+  //     // rot left with limit angle
+  //     this.charRotZ = Math.max(this.charRotZ - this.charRot * dt, this.minRotZ);
+  //   } else {
+  //     // set rot turn to 0 if no movement
+  //     if (this.charRotZ > 0) {
+  //       this.charRotZ = Math.max(this.charRotZ - this.charRot * dt, 0);
+  //     } else if (this.charRotZ < 0) {
+  //       this.charRotZ = Math.min(this.charRotZ + this.charRot * dt, 0);
+  //     }
+  //   }
+
+  //   // Thrust movement
+  //   if (this.app.keyboard.isPressed(pc.KEY_SPACE)) {
+  //     this.newMovement.y += this.charThrustPower * dt;
+  //     this.particle.playParticles();
+  //   } else {
+  //     this.particle.stopParticles();
+  //   }
+
+  //   if (!this.player.rigidbody) return;
+  //   this.newMovement.set(this.newMovement.x, this.newMovement.y, 0);
+  //   this.player.rigidbody.applyForce(this.newMovement);
+  //   // this.player.rigidbody.applyForce(new pc.Vec3(this.newMovement.x, this.newMovement.y, 0));
+  //   this.player.setEulerAngles(0, 180, this.charRotZ * pc.math.RAD_TO_DEG);
+  // }
 
   private Movement(dt: number) {
     if (this.app == null) return;
 
-    // left right
+    const movementForce = new pc.Vec3(0, 0, 0);
+
+    // left right movement
     if (this.app.keyboard.isPressed(pc.KEY_D)) {
-      this.newMovement.x -= this.charSpeed * dt;
-      // rot right with limit angle
+      movementForce.x -= this.charSpeed; // Tạo lực di chuyển theo chiều x (sang trái)
       this.charRotZ = Math.min(this.charRotZ + this.charRot * dt, this.maxRotZ);
     } else if (this.app.keyboard.isPressed(pc.KEY_A)) {
-      this.newMovement.x += this.charSpeed * dt;
-      // rot left with limit angle
+      movementForce.x += this.charSpeed; // Tạo lực di chuyển theo chiều x (sang phải)
       this.charRotZ = Math.max(this.charRotZ - this.charRot * dt, this.minRotZ);
     } else {
-      // set rot turn to 0 if no movement
+      // Giảm độ xoay khi không di chuyển
       if (this.charRotZ > 0) {
         this.charRotZ = Math.max(this.charRotZ - this.charRot * dt, 0);
       } else if (this.charRotZ < 0) {
@@ -120,24 +131,27 @@ export class PlayerManager extends pc.Entity {
       }
     }
 
-    // thrush
+    // Thrust movement (nhảy)
     if (this.app.keyboard.isPressed(pc.KEY_SPACE)) {
-      this.newMovement.y += this.charThrustPower * dt;
+      movementForce.y += this.charThrustPower; // Tạo lực đẩy lên
       this.particle.playParticles();
     } else {
       this.particle.stopParticles();
     }
 
+    // Giới hạn tốc độ tối đa
+    const maxSpeed = 10;
     if (!this.player.rigidbody) return;
-    this.player.rigidbody.linearVelocity = new pc.Vec3(this.newMovement.x, this.newMovement.y, 0);
+    const currentVelocity = this.player.rigidbody.linearVelocity;
+    if (currentVelocity.length() < maxSpeed) {
+      this.player.rigidbody.applyForce(movementForce); // Áp dụng lực di chuyển
+    }
+
+    // Cập nhật góc quay
     this.player.setEulerAngles(0, 180, this.charRotZ * pc.math.RAD_TO_DEG);
   }
 
   public update(dt: number) {
     this.Movement(dt);
-    this.checkGround();
-    this.HitObstacle();
-    this.PickFuels();
-    this.PickWrech();
   }
 }

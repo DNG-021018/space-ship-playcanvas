@@ -7,7 +7,7 @@ export class ParticlesSystem extends pc.Entity {
   }
 
   private init() {
-    this.setPosition(0, -2.5, -10);
+    this.setPosition(0, -2.5, 0);
     this.generatorParticles();
   }
 
@@ -28,7 +28,7 @@ export class ParticlesSystem extends pc.Entity {
       localSpace: true,
       localVelocityGraph: new pc.CurveSet([
         [0, 0],
-        [0, -20],
+        [0, -30],
         [0, 0],
       ]),
       localVelocityGraph2: new pc.CurveSet([

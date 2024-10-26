@@ -23,7 +23,7 @@ export class Wrech extends pc.Entity {
     this.setPosition(this.wrechPosition);
     this.setLocalScale(this.scale, this.scale, this.scale);
     this.loadModel();
-    this.setRigidbody();
+    // this.setRigidbody();
     this.setCollision();
 
     return this;
@@ -39,23 +39,30 @@ export class Wrech extends pc.Entity {
   }
 
   private setRigidbody() {
-    this.addComponent("rigidbody", {type: "kinematic"});
+    this.addComponent("rigidbody", {type: pc.BODYTYPE_STATIC});
     if (this.rigidbody == null) return;
-    this.rigidbody.mass = 0;
     this.rigidbody.restitution = 0;
     this.rigidbody.friction = 0;
-    this.rigidbody.linearFactor = new pc.Vec3(1, 1, 0);
-    this.rigidbody.angularFactor = new pc.Vec3(1, 1, 0);
   }
 
   private setCollision() {
-    this.addComponent("collision", {type: "capsule"});
+    this.addComponent("collision", {type: "box"});
     if (this.collision == null) return;
-    this.collision.radius = this.scale / 4;
-    this.collision.height = this.scale;
+    this.collision.halfExtents = new pc.Vec3(0.16, 0.16, 0.9);
+    this.collision.linearOffset = new pc.Vec3(0, 0, 0.63);
+  }
+
+  private CollisionUpdate() {
+    if (this.collision == null) return;
+    this.collision.on(pc.CollisionComponent.EVENT_TRIGGERENTER, (result) => {
+      if (result.name === "Player") {
+        this.destroy();
+      }
+    });
   }
 
   public update(dt) {
+    this.CollisionUpdate();
     this.charRotY -= this.charRot * dt;
     this.setEulerAngles(90, this.charRotY * pc.math.RAD_TO_DEG, 0);
   }

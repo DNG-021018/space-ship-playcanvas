@@ -10,6 +10,7 @@ import {AssetManager} from "./AssetManager";
 import {ParticlesSystem} from "../Effect/Particles";
 import {SkyboxManager} from "./SkyboxSetup";
 import {PlayerManager} from "../Entity/Player/PlayerManager";
+import {BoxEntity} from "./TEST";
 
 export class SceneGameManager {
   private app: pc.Application;
@@ -23,12 +24,17 @@ export class SceneGameManager {
   private playerManager: PlayerManager;
   private skybox: SkyboxManager;
 
+  // TEST
+  private box: BoxEntity;
+
+  //
+
   constructor(app: pc.Application) {
     this.app = app;
-    this.app.start();
-    this.init();
     this.setupPhysics();
+    this.init();
     this.setupEventListeners();
+    this.app.start();
   }
 
   private init() {
@@ -46,11 +52,15 @@ export class SceneGameManager {
   }
 
   private assetsLoaded() {
+    this.box = new BoxEntity();
+    this.RootChild(this.box);
+
     this.ground = new Ground();
     this.RootChild(this.ground);
 
-    this.playerManager = new PlayerManager(this.app);
-    this.RootChild(this.playerManager);
+    this.player = new Player(this.app);
+    this.RootChild(this.player);
+    this.player?.update();
 
     this.rock = new Rock();
     this.RootChild(this.rock);
@@ -72,13 +82,13 @@ export class SceneGameManager {
   }
 
   private updateEvents(dt: number) {
-    this.playerManager?.update(dt);
     this.fuel?.update(dt);
     this.rock?.update(dt);
     this.wrech?.update(dt);
   }
 
   private setupPhysics() {
-    this.app.systems.rigidbody?.gravity.set(0, -100, 0);
+    if (this.app.systems.rigidbody == null) return;
+    this.app.systems.rigidbody.gravity = new pc.Vec3(0, -9.8, 0);
   }
 }
