@@ -10,7 +10,6 @@ import {AssetManager} from "./AssetManager";
 import {ParticlesSystem} from "../Effect/Particles";
 import {SkyboxManager} from "./SkyboxSetup";
 import {PlayerManager} from "../Entity/Player/PlayerManager";
-import {BoxEntity} from "./TEST";
 
 export class SceneGameManager {
   private app: pc.Application;
@@ -21,13 +20,7 @@ export class SceneGameManager {
   private wrech: Wrech;
   private fuel: Fuel;
   private player: Player;
-  private playerManager: PlayerManager;
   private skybox: SkyboxManager;
-
-  // TEST
-  private box: BoxEntity;
-
-  //
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -38,29 +31,26 @@ export class SceneGameManager {
   }
 
   private init() {
-    this.camera = new Camera();
-    this.RootChild(this.camera);
-
     this.light = new Light();
     this.RootChild(this.light);
 
     this.skybox = new SkyboxManager(this.app);
 
     const assetManager = AssetManager.getInstance();
-    assetManager.on("assetsLoaded", this.assetsLoaded, this);
+    assetManager.on("assetsLoaded", this.Loaded, this);
     assetManager.LoadAsset(this.app);
   }
 
-  private assetsLoaded() {
-    this.box = new BoxEntity();
-    this.RootChild(this.box);
-
+  private Loaded() {
     this.ground = new Ground();
     this.RootChild(this.ground);
 
     this.player = new Player(this.app);
     this.RootChild(this.player);
     this.player?.update();
+
+    this.camera = new Camera(this.player);
+    this.RootChild(this.camera);
 
     this.rock = new Rock();
     this.RootChild(this.rock);
@@ -85,6 +75,7 @@ export class SceneGameManager {
     this.fuel?.update(dt);
     this.rock?.update(dt);
     this.wrech?.update(dt);
+    this.camera?.update(dt);
   }
 
   private setupPhysics() {

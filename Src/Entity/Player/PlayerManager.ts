@@ -56,7 +56,8 @@ export class PlayerManager extends pc.Entity {
     }
 
     if (result.other.name == "obstacle") {
-      console.log(result.other.name);
+      if (!this.player.rigidbody) return;
+      this.player.rigidbody.linearVelocity = pc.Vec3.ZERO;
       this.healSystem.takeDamage(this.obstacle.getRockDamage());
 
       if (this.healSystem.onDeath()) {
@@ -71,44 +72,6 @@ export class PlayerManager extends pc.Entity {
     if (this.player.collision == null) return;
     this.player.collision.on(pc.CollisionComponent.EVENT_COLLISIONSTART, this.CollisionDetection.bind(this));
   }
-
-  // private Movement(dt: number) {
-  //   if (this.app == null) return;
-
-  //   // // left right
-  //   if (this.app.keyboard.isPressed(pc.KEY_D)) {
-  //     this.newMovement.x -= this.charSpeed * dt;
-
-  //     // rot right with limit angle
-  //     this.charRotZ = Math.min(this.charRotZ + this.charRot * dt, this.maxRotZ);
-  //   } else if (this.app.keyboard.isPressed(pc.KEY_A)) {
-  //     this.newMovement.x += this.charSpeed * dt;
-
-  //     // rot left with limit angle
-  //     this.charRotZ = Math.max(this.charRotZ - this.charRot * dt, this.minRotZ);
-  //   } else {
-  //     // set rot turn to 0 if no movement
-  //     if (this.charRotZ > 0) {
-  //       this.charRotZ = Math.max(this.charRotZ - this.charRot * dt, 0);
-  //     } else if (this.charRotZ < 0) {
-  //       this.charRotZ = Math.min(this.charRotZ + this.charRot * dt, 0);
-  //     }
-  //   }
-
-  //   // Thrust movement
-  //   if (this.app.keyboard.isPressed(pc.KEY_SPACE)) {
-  //     this.newMovement.y += this.charThrustPower * dt;
-  //     this.particle.playParticles();
-  //   } else {
-  //     this.particle.stopParticles();
-  //   }
-
-  //   if (!this.player.rigidbody) return;
-  //   this.newMovement.set(this.newMovement.x, this.newMovement.y, 0);
-  //   this.player.rigidbody.applyForce(this.newMovement);
-  //   // this.player.rigidbody.applyForce(new pc.Vec3(this.newMovement.x, this.newMovement.y, 0));
-  //   this.player.setEulerAngles(0, 180, this.charRotZ * pc.math.RAD_TO_DEG);
-  // }
 
   private Movement(dt: number) {
     if (this.app == null) return;
