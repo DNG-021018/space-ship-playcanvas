@@ -7,9 +7,9 @@ import {Wrech} from "../Entity/Wrech";
 import {Fuel} from "../Entity/Fuel";
 import {Player} from "../Entity/Player/Player";
 import {AssetManager} from "./AssetManager";
-import {ParticlesSystem} from "../Effect/Particles";
 import {SkyboxManager} from "./SkyboxSetup";
-import {PlayerManager} from "../Entity/Player/PlayerManager";
+import {UIManager} from "../UI/UIManager";
+import {SoundManager} from "../Sound/SoundBase";
 
 export class SceneGameManager {
   private app: pc.Application;
@@ -20,14 +20,16 @@ export class SceneGameManager {
   private wrech: Wrech;
   private fuel: Fuel;
   private player: Player;
+  private uiManager: UIManager;
   private skybox: SkyboxManager;
+  private themeSound: SoundManager;
 
   constructor(app: pc.Application) {
     this.app = app;
     this.setupPhysics();
-    this.init();
     this.setupEventListeners();
     this.app.start();
+    this.init();
   }
 
   private init() {
@@ -35,6 +37,7 @@ export class SceneGameManager {
     this.RootChild(this.light);
 
     this.skybox = new SkyboxManager(this.app);
+    this.skybox.init();
 
     const assetManager = AssetManager.getInstance();
     assetManager.on("assetsLoaded", this.Loaded, this);
@@ -42,6 +45,14 @@ export class SceneGameManager {
   }
 
   private Loaded() {
+    this.themeSound = new SoundManager(this.app);
+    this.themeSound.loadAndPlaySoundFromURL("../../../Assets/Sound/theme.wav", "theme", true, 0.4);
+    this.themeSound.playSound("theme");
+    this.RootChild(this.themeSound);
+
+    this.uiManager = new UIManager(this.app);
+    this.RootChild(this.uiManager);
+
     this.ground = new Ground();
     this.RootChild(this.ground);
 
@@ -52,14 +63,17 @@ export class SceneGameManager {
     this.camera = new Camera(this.player);
     this.RootChild(this.camera);
 
-    this.rock = new Rock();
+    this.rock = new Rock(-10, -3.5, -10);
     this.RootChild(this.rock);
+    this.RootChild(new Rock(10, -3.5, -10));
 
-    this.wrech = new Wrech();
+    this.wrech = new Wrech(this.app, -10, 4, -10);
     this.RootChild(this.wrech);
+    this.RootChild(new Wrech(this.app, 10, 4, -10));
 
-    this.fuel = new Fuel();
+    this.fuel = new Fuel(this.app, 15, 4, -10);
     this.RootChild(this.fuel);
+    this.RootChild(new Fuel(this.app, -15, 4, -10));
   }
 
   private RootChild(entity: pc.Entity) {
@@ -72,9 +86,6 @@ export class SceneGameManager {
   }
 
   private updateEvents(dt: number) {
-    this.fuel?.update(dt);
-    this.rock?.update(dt);
-    this.wrech?.update(dt);
     this.camera?.update(dt);
   }
 

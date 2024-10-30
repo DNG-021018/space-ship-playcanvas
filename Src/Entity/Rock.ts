@@ -1,17 +1,24 @@
 import * as pc from "playcanvas";
 import {AssetManager} from "../Core/AssetManager";
 import {AssetKey} from "../Enum/AssetKey";
+import {SoundManager} from "../Sound/SoundBase";
 
 export class Rock extends pc.Entity {
   private charModelAsset = AssetManager.getInstance().getAsset(AssetKey.ModelObstacleRock);
-  private rockPosition: pc.Vec3 = new pc.Vec3(-5, 2, -10);
+  // private rockPosition: pc.Vec3 = new pc.Vec3(-5, 2, -10);
+  private posX: number;
+  private posY: number;
+  private posZ: number;
   private scale: number = 1;
   private damage: number = 1;
-  private charRotY: number = 0;
-  private charRot: number = 0.3;
+  // private charRotY: number = 0;
+  // private charRot: number = 0.3;
 
-  constructor() {
+  constructor(rockPosX: number, rockPosY: number, rockPosZ: number) {
     super();
+    this.posX = rockPosX;
+    this.posY = rockPosY;
+    this.posZ = rockPosZ;
     this.init();
   }
 
@@ -20,7 +27,7 @@ export class Rock extends pc.Entity {
   }
 
   private init() {
-    this.setPosition(this.rockPosition);
+    this.setPosition(this.posX, this.posY, this.posZ);
     this.setLocalScale(this.scale, this.scale, this.scale);
     this.loadModel();
     this.setRigidbody();
@@ -52,8 +59,8 @@ export class Rock extends pc.Entity {
     this.collision.linearOffset = new pc.Vec3(-0.3, 1.31, 0);
   }
 
-  public update(dt) {
-    this.charRotY -= this.charRot * dt;
-    this.setEulerAngles(0, this.charRotY * pc.math.RAD_TO_DEG, 0);
-  }
+  // public update(dt) {
+  //   this.charRotY -= this.charRot * dt;
+  //   this.setEulerAngles(0, this.charRotY * pc.math.RAD_TO_DEG, 0);
+  // }
 }

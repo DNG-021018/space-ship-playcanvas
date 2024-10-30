@@ -30,10 +30,9 @@ export class SkyboxManager {
 
   constructor(app) {
     this.app = app;
-    this.init();
   }
 
-  private init() {
+  public init() {
     this.app.setSkybox(this.cubemapAsset);
   }
 }

@@ -1,17 +1,27 @@
 import * as pc from "playcanvas";
 import {AssetManager} from "../Core/AssetManager";
 import {AssetKey} from "../Enum/AssetKey";
+import {SoundManager} from "../Sound/SoundBase";
 
 export class Wrech extends pc.Entity {
+  private app: pc.Application;
   private charModelAsset = AssetManager.getInstance().getAsset(AssetKey.ModelItemsWrech);
   private wrechPosition: pc.Vec3 = new pc.Vec3(5, 2, -10);
   private scale: number = 5;
   private health: number = 1;
   private charRotY: number = 0;
   private charRot: number = 1;
+  private pickUpItems: SoundManager;
+  private posX: number;
+  private posY: number;
+  private posZ: number;
 
-  constructor() {
+  constructor(app: pc.Application, wrechPosX: number, wrechPosY: number, wrechPosZ: number) {
     super();
+    this.app = app;
+    this.posX = wrechPosX;
+    this.posY = wrechPosY;
+    this.posZ = wrechPosZ;
     this.init();
   }
 
@@ -20,11 +30,13 @@ export class Wrech extends pc.Entity {
   }
 
   private init() {
-    this.setPosition(this.wrechPosition);
+    this.setPosition(this.posX, this.posY, this.posZ);
     this.setLocalScale(this.scale, this.scale, this.scale);
     this.loadModel();
-    // this.setRigidbody();
+    this.setupEventListeners();
     this.setCollision();
+    this.pickUpItems = new SoundManager(this.app);
+    this.pickUpItems.loadAndPlaySoundFromURL("../../../Assets/Sound/item-pick-up.mp3", "pickupWrech", false, 1);
 
     return this;
   }
@@ -38,13 +50,6 @@ export class Wrech extends pc.Entity {
     });
   }
 
-  private setRigidbody() {
-    this.addComponent("rigidbody", {type: pc.BODYTYPE_STATIC});
-    if (this.rigidbody == null) return;
-    this.rigidbody.restitution = 0;
-    this.rigidbody.friction = 0;
-  }
-
   private setCollision() {
     this.addComponent("collision", {type: "box"});
     if (this.collision == null) return;
@@ -56,9 +61,15 @@ export class Wrech extends pc.Entity {
     if (this.collision == null) return;
     this.collision.on(pc.CollisionComponent.EVENT_TRIGGERENTER, (result) => {
       if (result.name === "Player") {
+        this.pickUpItems.playSound("pickupWrech");
         this.destroy();
       }
     });
+  }
+
+  private setupEventListeners() {
+    window.addEventListener("resize", () => this.app.resizeCanvas());
+    this.app.on("update", this.update.bind(this));
   }
 
   public update(dt) {

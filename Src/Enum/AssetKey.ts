@@ -8,6 +8,20 @@ export enum AssetKey {
   ModelItemsFuel = "ModelItemFuel",
   ModelItemsWrech = "ModelItemsWrech",
   ModelLoadingScreenCloudy = "ModelLoadingScreenCloudy",
-  // UI
   // Fonts
+  FontRaceSport = "FontRaceSport",
+  // UI Icons
+  IMGIconPause = "IMGIconPause",
+  IMGIconPlay = "IMGIconPlay",
+  IMGIconHome = "IMGIconHome",
+  IMGIconReplay = "IMGIconReplay",
+  IMGIconSoundOn = "IMGIconSoundOn",
+  IMGIconSoundOff = "IMGIconSoundOff",
+  // UI Button IMG
+  // square
+  IMGButtonSquareDefault = "IMGButtonSquareDefault",
+  IMGButtonSquareHover = "IMGButtonSquareHover",
+  //rect
+  IMGButtonRectDefault = "IMGButtonRectDefault",
+  IMGButtonRectHover = "IMGButtonRectHover",
 }

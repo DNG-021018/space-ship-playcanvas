@@ -31,7 +31,7 @@ export class Ground extends pc.Entity {
     const material = new pc.StandardMaterial();
     const assetTexture = this.MapTextureAssets?.resource as pc.Texture;
     material.diffuseMap = assetTexture;
-    material.diffuseMapTiling.set(20, 20);
+    // material.diffuseMapTiling.set(20, 20);
     material.update();
     const meshInstance = this.render?.meshInstances[0];
     if (meshInstance) {

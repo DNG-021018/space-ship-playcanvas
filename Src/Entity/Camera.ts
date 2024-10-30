@@ -4,7 +4,7 @@ import {Player} from "./Player/Player";
 export class Camera extends pc.Entity {
   private player: Player;
   private colorBackground: pc.Color = new pc.Color(66 / 255, 135 / 255, 245 / 255);
-  private offset: pc.Vec3 = new pc.Vec3(0, 1, -25);
+  private offset: pc.Vec3 = new pc.Vec3(0, 1, -35);
   private angles: pc.Vec3 = new pc.Vec3(10, 180, 0);
 
   constructor(player: Player) {
