@@ -1,7 +1,7 @@
 import * as pc from "playcanvas";
 import {AssetManager} from "../Core/AssetManager";
 import {AssetKey} from "../Enum/AssetKey";
-import {SoundManager} from "../Sound/SoundBase";
+import {SoundManager} from "../Sound/SoundManager";
 
 export class Rock extends pc.Entity {
   private charModelAsset = AssetManager.getInstance().getAsset(AssetKey.ModelObstacleRock);

@@ -12,11 +12,12 @@ export class PauseMenu extends pc.Entity {
   constructor(app: pc.Application) {
     super();
     this.app = app;
-    this.enabled = false;
+
     this.Init();
   }
 
   private Init() {
+    this.enabled = false;
     this.BackGround();
     this.SetUp();
   }
@@ -36,7 +37,7 @@ export class PauseMenu extends pc.Entity {
     this.addComponent("element", {
       type: pc.ELEMENTTYPE_IMAGE,
       anchor: [0.5, 0.5, 0.5, 0.5],
-      pivot: [0.5, 0.5],
+      pivot: [0.9637, 0.926],
       width: this.app.graphicsDevice.width,
       height: this.app.graphicsDevice.height,
       color: new pc.Color(0, 0, 0),

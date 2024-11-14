@@ -6,20 +6,27 @@ import {PauseMenu} from "./PauseMenu";
 export class BtnPauseGame extends BaseButton {
   private app: pc.Application;
   private pauseMenu: PauseMenu;
+  private isPausing: boolean = false;
 
-  constructor(app: pc.Application, pauseMenu: PauseMenu) {
+  constructor(app: pc.Application) {
     super({
       width: 80,
       height: 80,
       textureAsset: AssetKey.IMGIconPause,
     });
-    this.pauseMenu = pauseMenu;
+
     this.app = app;
     this.enabled = true;
     this.setAnchorPivot();
     this.setButtonOnClick();
     this.setButtonOnPress();
+    this.Init();
     this.setLocalPosition(-30, -30, 0);
+  }
+
+  private Init() {
+    this.pauseMenu = new PauseMenu(this.app);
+    this.addChild(this.pauseMenu);
   }
 
   private setAnchorPivot() {
@@ -42,14 +49,14 @@ export class BtnPauseGame extends BaseButton {
   }
 
   private togglePause() {
-    if (this.enabled) {
+    if (!this.isPausing) {
       this.pauseMenu.enabled = true;
-      this.enabled = false;
       this.app.timeScale = 0;
+      this.isPausing = true;
     } else {
       this.pauseMenu.enabled = false;
-      this.enabled = true;
       this.app.timeScale = 1;
+      this.isPausing = false;
     }
   }
 }

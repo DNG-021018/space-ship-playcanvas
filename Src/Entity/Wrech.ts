@@ -1,24 +1,24 @@
 import * as pc from "playcanvas";
 import {AssetManager} from "../Core/AssetManager";
 import {AssetKey} from "../Enum/AssetKey";
-import {SoundManager} from "../Sound/SoundBase";
+import {SoundManager} from "../Sound/SoundManager";
 
 export class Wrech extends pc.Entity {
   private app: pc.Application;
   private charModelAsset = AssetManager.getInstance().getAsset(AssetKey.ModelItemsWrech);
-  private wrechPosition: pc.Vec3 = new pc.Vec3(5, 2, -10);
   private scale: number = 5;
   private health: number = 1;
   private charRotY: number = 0;
   private charRot: number = 1;
-  private pickUpItems: SoundManager;
   private posX: number;
   private posY: number;
   private posZ: number;
+  private soundManager: SoundManager;
 
-  constructor(app: pc.Application, wrechPosX: number, wrechPosY: number, wrechPosZ: number) {
+  constructor(app: pc.Application, soundManager: SoundManager, wrechPosX: number, wrechPosY: number, wrechPosZ: number) {
     super();
     this.app = app;
+    this.soundManager = soundManager;
     this.posX = wrechPosX;
     this.posY = wrechPosY;
     this.posZ = wrechPosZ;
@@ -35,9 +35,6 @@ export class Wrech extends pc.Entity {
     this.loadModel();
     this.setupEventListeners();
     this.setCollision();
-    this.pickUpItems = new SoundManager(this.app);
-    this.pickUpItems.loadAndPlaySoundFromURL("../../../Assets/Sound/item-pick-up.mp3", "pickupWrech", false, 1);
-
     return this;
   }
 
@@ -61,7 +58,7 @@ export class Wrech extends pc.Entity {
     if (this.collision == null) return;
     this.collision.on(pc.CollisionComponent.EVENT_TRIGGERENTER, (result) => {
       if (result.name === "Player") {
-        this.pickUpItems.playSound("pickupWrech");
+        this.soundManager.playSFXItemPickUp();
         this.destroy();
       }
     });

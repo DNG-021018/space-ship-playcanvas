@@ -1,35 +1,32 @@
 import * as pc from "playcanvas";
 import {ParticlesSystem} from "../../Effect/Particles";
 import {Player} from "./Player";
-import {SoundManager} from "../../Sound/SoundBase";
+import {SoundManager} from "../../Sound/SoundManager";
 
 export class PlayerManager extends pc.Entity {
   private app: pc.Application;
   private player: Player;
   private particle: ParticlesSystem;
-  private engineSoundEffect: SoundManager;
   // player movement stats
   private charSpeed: number = 10;
   private charRot: number = 3;
   private charThrustPower: number = 30;
   private charRotZ: number = 0;
   private minRotZ: number = -50 * pc.math.DEG_TO_RAD;
+  private soundManager: SoundManager;
   private maxRotZ: number = 50 * pc.math.DEG_TO_RAD;
 
-  constructor(app, player) {
+  constructor(app, player, soundManager: SoundManager) {
     super();
     this.app = app;
     this.player = player;
+    this.soundManager = soundManager;
     this.init();
   }
 
   private init() {
     this.particle = new ParticlesSystem();
     this.player.addChild(this.particle);
-
-    this.engineSoundEffect = new SoundManager(this.app);
-    this.engineSoundEffect.loadAndPlaySoundFromURL("../../../Assets/Sound/SFX - Main engine thrust.ogg", "engine", true, 1);
-    this.player.addChild(this.engineSoundEffect);
   }
 
   private Movement(dt: number) {
@@ -53,10 +50,10 @@ export class PlayerManager extends pc.Entity {
 
     if (this.app.keyboard.isPressed(pc.KEY_SPACE)) {
       movementForce.y += this.charThrustPower;
-      this.engineSoundEffect.playSound("engine");
+      this.soundManager.playSFXEngine();
       this.particle.playParticles();
     } else {
-      this.engineSoundEffect.stopSound("engine");
+      this.soundManager.stopSFXEngine();
       this.particle.stopParticles();
     }
     if (!this.player.rigidbody) return;

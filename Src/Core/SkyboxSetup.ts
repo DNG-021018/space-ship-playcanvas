@@ -1,6 +1,4 @@
 import * as pc from "playcanvas";
-import {AssetManager} from "../Core/AssetManager";
-import {AssetKey} from "../Enum/AssetKey";
 
 export class SkyboxManager {
   private app: pc.Application;

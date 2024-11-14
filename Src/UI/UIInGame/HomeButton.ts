@@ -1,7 +1,7 @@
 import * as pc from "playcanvas";
 import {BaseButton} from "../BaseButton";
 import {AssetKey} from "../../Enum/AssetKey";
-import {PauseMenu} from "./PauseMenu";
+import {EventManager} from "../../Utils/EventEmiter";
 
 export class BtnHome extends BaseButton {
   constructor() {
@@ -27,6 +27,7 @@ export class BtnHome extends BaseButton {
   }
 
   private togglePause() {
-    window.close();
+    EventManager.emit("CloseUIInGame");
+    EventManager.emit("OpenUiMainMenu");
   }
 }

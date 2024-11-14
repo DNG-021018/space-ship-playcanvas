@@ -1,16 +1,14 @@
 import * as pc from "playcanvas";
-import {IUIController} from "../IUIController";
 import {BtnPauseGame} from "./PauseButton";
-import {PauseMenu} from "./PauseMenu";
 
-export class UIInGame extends pc.Entity implements IUIController {
+export class UIInGame extends pc.Entity {
   private app: pc.Application;
   private btnPause: BtnPauseGame;
-  private pauseMenu: PauseMenu;
 
   constructor(app: pc.Application) {
     super();
     this.app = app;
+    this.enabled = false;
     this.setElement();
     this.setUpBegin();
   }
@@ -26,21 +24,7 @@ export class UIInGame extends pc.Entity implements IUIController {
   }
 
   private setUpBegin() {
-    this.pauseMenu = new PauseMenu(this.app);
-    this.addChild(this.pauseMenu);
-
-    this.btnPause = new BtnPauseGame(this.app, this.pauseMenu);
+    this.btnPause = new BtnPauseGame(this.app);
     this.addChild(this.btnPause);
-  }
-
-  private init() {}
-
-  Open(): void {
-    this.init();
-    this.enabled = true;
-  }
-
-  Close(): void {
-    this.enabled = false;
   }
 }

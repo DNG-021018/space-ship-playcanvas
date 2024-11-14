@@ -10,6 +10,11 @@ export enum AssetKey {
   ModelLoadingScreenCloudy = "ModelLoadingScreenCloudy",
   // Fonts
   FontRaceSport = "FontRaceSport",
+  // Audio
+  AudioEngineThrust = "AudioEngineThrust",
+  AudioDeathExplode = "AudioDeathExplode",
+  AudioItemsPickUp = "AudioItemsPickUp",
+  AudioThemeBackground = "AudioThemeBackGround",
   // UI Icons
   IMGIconPause = "IMGIconPause",
   IMGIconPlay = "IMGIconPlay",
@@ -17,6 +22,7 @@ export enum AssetKey {
   IMGIconReplay = "IMGIconReplay",
   IMGIconSoundOn = "IMGIconSoundOn",
   IMGIconSoundOff = "IMGIconSoundOff",
+  IMGIconPurusGame = "IMGIconPurusGame",
   // UI Button IMG
   // square
   IMGButtonSquareDefault = "IMGButtonSquareDefault",
@@ -24,4 +30,7 @@ export enum AssetKey {
   //rect
   IMGButtonRectDefault = "IMGButtonRectDefault",
   IMGButtonRectHover = "IMGButtonRectHover",
+  //
+  IMGButtonPlayRectDefault = "IMGButtonPlayRectDefault",
+  IMGButtonPlayRectHover = "IMGButtonPlayRectHover",
 }

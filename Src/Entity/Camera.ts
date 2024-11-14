@@ -2,14 +2,17 @@ import * as pc from "playcanvas";
 import {Player} from "./Player/Player";
 
 export class Camera extends pc.Entity {
+  private app: pc.Application;
   private player: Player;
   private colorBackground: pc.Color = new pc.Color(66 / 255, 135 / 255, 245 / 255);
   private offset: pc.Vec3 = new pc.Vec3(0, 1, -35);
   private angles: pc.Vec3 = new pc.Vec3(10, 180, 0);
 
-  constructor(player: Player) {
+  constructor(player: Player, app: pc.Application) {
     super();
+    this.app = app;
     this.player = player;
+    this.setupEventListeners();
     this.init();
   }
 
@@ -29,7 +32,12 @@ export class Camera extends pc.Entity {
     this.setPosition(playerPos.x + this.offset.x, playerPos.y + this.offset.y, playerPos.z + this.offset.z);
   }
 
-  public update(dt: number) {
+  private setupEventListeners() {
+    window.addEventListener("resize", () => this.app.resizeCanvas());
+    this.app.on("update", this.update.bind(this));
+  }
+
+  private update(dt: number) {
     this.followPlayer();
   }
 }

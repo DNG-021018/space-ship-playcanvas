@@ -2,37 +2,34 @@ import * as pc from "playcanvas";
 import {AssetManager} from "../../Core/AssetManager";
 import {AssetKey} from "../../Enum/AssetKey";
 import {PlayerManager} from "./PlayerManager";
-import {SoundManager} from "../../Sound/SoundBase";
+import {SoundManager} from "../../Sound/SoundManager";
 
 export class Player extends pc.Entity {
   // Init
+  private app: pc.Application;
   private playerPos: pc.Vec3 = new pc.Vec3(0, -2, -10);
   private playerScale: number = 0.1;
   private playerMangager: PlayerManager;
-  private engineHitEffect: SoundManager;
-  private app: pc.Application;
+  private soundManager: SoundManager;
 
   // assets
   private charModelAsset = AssetManager.getInstance().getAsset(AssetKey.ModelPlayerRocket);
 
-  constructor(app) {
+  constructor(app, soundManager: SoundManager) {
     super();
     this.app = app;
+    this.soundManager = soundManager;
     this.init();
   }
 
   private init() {
-    this.playerMangager = new PlayerManager(this.app, this);
+    this.playerMangager = new PlayerManager(this.app, this, this.soundManager);
     this.root.addChild(this.playerMangager);
     this.setPosition(this.playerPos);
     this.setLocalScale(this.playerScale, this.playerScale, this.playerScale);
     this.loadPlayer();
     this.setRigidbody();
     this.setCollision();
-
-    this.engineHitEffect = new SoundManager(this.app);
-    this.engineHitEffect.loadAndPlaySoundFromURL("../../../Assets/Sound/SFX - Death Explosion.ogg", "explode", false, 0.4);
-    this.addChild(this.engineHitEffect);
     return this;
   }
 
@@ -65,12 +62,12 @@ export class Player extends pc.Entity {
   private CollisionDetection(result) {
     if (result.other && result.other.name == "obstacle") {
       if (!this.rigidbody) return;
-      this.engineHitEffect.playSound("explode");
+      this.soundManager.playSFXExplosion();
       this.app.timeScale = 0;
       setTimeout(() => {
         window.location.reload();
         return;
-      }, 500);
+      }, 200);
     }
   }
 
